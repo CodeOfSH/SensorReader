@@ -1,49 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context=".MainActivity"
     android:keepScreenOn="true"
-    tools:context=".MainActivity">
+    >
 
-
-
-    <LinearLayout
-            android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:text="@string/main_text"/>
+    <!--<com.github.mikephil.charting.charts.LineChart-->
+    <!--android:id="@+id/dynamic_chart1"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="200dp" />-->
+    <!--<com.github.mikephil.charting.charts.LineChart-->
+    <!--android:id="@+id/dynamic_chart2"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="200dp"/>-->
+    <!--<com.github.mikephil.charting.charts.LineChart-->
+    <!--android:id="@+id/dynamic_chart3"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="200dp"/>-->
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_below="@+id/text">
+        <RadioButton
+            android:id="@+id/radiobutton1"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="top"
-            android:orientation="vertical">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Screen Always On"/>
-        <!--<com.github.mikephil.charting.charts.LineChart-->
-            <!--android:id="@+id/dynamic_chart1"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="200dp" />-->
+            android:layout_weight="1"
+            android:text="@string/record_rate_1"
+            android:gravity="center"
+            android:checked="true"
+            android:background="@null"/>
+        <RadioButton
+            android:id="@+id/radiobutton2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/record_rate_2"
+            android:gravity="center"
+            android:background="@null"/>
+        <RadioButton
+            android:id="@+id/radiobutton3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/record_rate_3"
+            android:gravity="center"
+            android:background="@null"/>
+        <RadioButton
+            android:id="@+id/radiobutton4"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/record_rate_4"
+            android:gravity="center"
+            android:background="@null"/>
+    </RadioGroup>
 
-        <!--<com.github.mikephil.charting.charts.LineChart-->
-            <!--android:id="@+id/dynamic_chart2"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="200dp"/>-->
-        <!--<com.github.mikephil.charting.charts.LineChart-->
-            <!--android:id="@+id/dynamic_chart3"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="200dp"/>-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="@string/StartButton"
+        android:onClick="clickStart"
+        android:layout_below="@+id/radio_group"
+        />
 
-            <Button
-                android:id="@+id/button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Start"
-                android:onClick="clickStart"/>
-        </LinearLayout>
-    </LinearLayout>
-
-
-</LinearLayout>
+</RelativeLayout>

@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">SensorReader</string>
+    <string name="main_text">Sensor Record Rate</string>
+    <string name="record_rate_1">100ms</string>
+    <string name="record_rate_2">50ms</string>
+    <string name="record_rate_3">20ms</string>
+    <string name="record_rate_4">10ms</string>
+    <string name="StartButton">Start</string>
 </resources>

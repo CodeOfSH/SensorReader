@@ -15,9 +15,11 @@ import android.hardware.SensorManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.RadioGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -210,6 +212,8 @@ import java.util.TimerTask;
 //}
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private SensorManager sensorManager;
+    private RadioGroup mRadioGroup;
+    private int SensorRate=0;
     private List<Float> list = new ArrayList<>();
     private List<String> names=new ArrayList<>();
     private List<String> stringValues=new ArrayList<>();
@@ -248,6 +252,34 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         names.add("Y");
         names.add("Z");
 
+        SensorRate=100000;
+        mRadioGroup=findViewById(R.id.radio_group);
+        mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId){
+                    case R.id.radiobutton1:
+                        SensorRate=100000;
+                        System.out.println("Rate set to 100000");
+                        break;
+                    case R.id.radiobutton2:
+                        SensorRate=50000;
+                        System.out.println("Rate set to 50000");
+                        break;
+                    case R.id.radiobutton3:
+                        SensorRate=20000;
+                        System.out.println("Rate set to 20000");
+                        break;
+                    case R.id.radiobutton4:
+                        SensorRate=10000;
+                        System.out.println("Rate set to 10000");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
 
         task = new TimerTask() {
             @Override
@@ -282,16 +314,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onResume() {
         super.onResume();
-        //__________________________________________________________________
-        //__________________________________________________________________
-        //__________________________________________________________________
-        //The end of this line is where you need to modify the sensor rate!
-        //__________________________________________________________________
-        //__________________________________________________________________
-        //__________________________________________________________________
-        sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST);
-        sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE),SensorManager.SENSOR_DELAY_FASTEST);
-        sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     @Override
@@ -306,17 +328,35 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             isRecording=false;
             button.setText("Start");
             System.out.println("CSV saved");
+            for (int i = 0; i < mRadioGroup.getChildCount(); i++) {
+                mRadioGroup.getChildAt(i).setEnabled(true);
+            }
         }
     }
 
     public void clickStart(View V){
         if(isRecording==false){
+            //__________________________________________________________________
+            //__________________________________________________________________
+            //__________________________________________________________________
+            //The end of this line is where you need to modify the sensor rate!
+            //__________________________________________________________________
+            //__________________________________________________________________
+            //__________________________________________________________________
+            sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorRate);
+            sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE),SensorRate);
+            sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),SensorRate);
+
             recorder_Accelerometer.open("Acclerometer",names);
             recorder_Gyroscope.open("Gyroscpoe", names);
             recorder_Magnetic.open("Magnetic", names);
             System.out.println("Start recording");
             button.setText("Stop");
             isRecording=true;
+
+            for (int i = 0; i < mRadioGroup.getChildCount(); i++) {
+                mRadioGroup.getChildAt(i).setEnabled(false);
+            }
         }else{
             recorder_Accelerometer.flush();
             recorder_Gyroscope.flush();
@@ -324,6 +364,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             isRecording=false;
             button.setText("Start");
             System.out.println("CSV saved");
+
+            for (int i = 0; i < mRadioGroup.getChildCount(); i++) {
+                mRadioGroup.getChildAt(i).setEnabled(true);
+            }
         }
     }
 
