@@ -19,7 +19,7 @@ public class Recorder {
     private final String mComma = ",";
     private StringBuilder mStringBuilder = null;
     private String mFileName = null;
-    private SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
+    private SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
     public void open(String filename, List<String> valueNames) {
         String folderName = null;
