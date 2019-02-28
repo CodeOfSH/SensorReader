@@ -214,15 +214,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SensorManager sensorManager;
     private RadioGroup mRadioGroup;
     private int SensorRate=0;
-    private List<Float> list = new ArrayList<>();
+//    private List<Float> list = new ArrayList<>();
     private List<String> names=new ArrayList<>();
     private List<String> stringValues=new ArrayList<>();
-    private List<Integer> color=new ArrayList<>();
+//    private List<Integer> color=new ArrayList<>();
 
     private Recorder recorder_Accelerometer=new Recorder();
-    private Recorder recorder_Gyroscope=new Recorder();
-    private Recorder recorder_Magnetic=new Recorder();
+//    private Recorder recorder_Gyroscope=new Recorder();
+//    private Recorder recorder_Magnetic=new Recorder();
     private Boolean isRecording=false;
+
+    private float[] value_magnetic = new float[3];
+    private float[] value_gravity = new float[3];
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -287,8 +290,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 if(isRecording)
                 {
                     recorder_Accelerometer.flush();
-                    recorder_Gyroscope.flush();
-                    recorder_Magnetic.flush();
+//                    recorder_Gyroscope.flush();
+//                    recorder_Magnetic.flush();
                 }            }
         };
 
@@ -323,8 +326,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if(isRecording)
         {
             recorder_Accelerometer.flush();
-            recorder_Gyroscope.flush();
-            recorder_Magnetic.flush();
+//            recorder_Gyroscope.flush();
+//            recorder_Magnetic.flush();
             isRecording=false;
             button.setText("Start");
             System.out.println("CSV saved");
@@ -344,12 +347,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             //__________________________________________________________________
             //__________________________________________________________________
             sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorRate);
-            sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE),SensorRate);
+//            sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE),SensorRate);
+            sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY),SensorRate);
             sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),SensorRate);
 
             recorder_Accelerometer.open("Acclerometer",names);
-            recorder_Gyroscope.open("Gyroscpoe", names);
-            recorder_Magnetic.open("Magnetic", names);
+//            recorder_Gyroscope.open("Gyroscpoe", names);
+//            recorder_Magnetic.open("Magnetic", names);
             System.out.println("Start recording");
             button.setText("Stop");
             isRecording=true;
@@ -359,8 +363,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }else{
             recorder_Accelerometer.flush();
-            recorder_Gyroscope.flush();
-            recorder_Magnetic.flush();
+//            recorder_Gyroscope.flush();
+//            recorder_Magnetic.flush();
             isRecording=false;
             button.setText("Start");
             System.out.println("CSV saved");
@@ -376,26 +380,39 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         float[] values = event.values;
         if(event.sensor.getType()==Sensor.TYPE_ACCELEROMETER && isRecording)
         {
-            stringValues.add(Float.toString(values[0]));
-            stringValues.add(Float.toString(values[1]));
-            stringValues.add(Float.toString(values[2]));
-            recorder_Accelerometer.writeCsv(stringValues);
-            stringValues.clear();
+            if(value_gravity!=null && value_magnetic!=null) {
+                float[] rotate = new float[16];
+                float[] relative_value = new float[4];
+                float[] inverse_rotate = new float[16];
+                float[] earth_values = new float[4];
+                SensorManager.getRotationMatrix(rotate, null, value_gravity, value_magnetic);
+//                Log.d("Value", "rotate" + Float.toString(rotate[0]));
+                relative_value[0]=values[0];
+                relative_value[1]=values[1];
+                relative_value[2]=values[2];
+                relative_value[3]=0;
+                android.opengl.Matrix.invertM(inverse_rotate, 0, rotate, 0);
+//                Log.d("Value", "Relative Value" + Float.toString(relative_value[0]));
+//                Log.d("Value", "Inverse rotate" + Float.toString(inverse_rotate[0]));
+                android.opengl.Matrix.multiplyMV(earth_values, 0, inverse_rotate, 0, relative_value, 0);
+//                Log.d("Value", "earth value" + String.valueOf(earth_values[0]));
 
-        }else if(event.sensor.getType()==Sensor.TYPE_GYROSCOPE && isRecording)
+                stringValues.add(Float.toString(earth_values[0]));
+                stringValues.add(Float.toString(earth_values[1]));
+                stringValues.add(Float.toString(earth_values[2]));
+                recorder_Accelerometer.writeCsv(stringValues);
+                stringValues.clear();
+            }
+        }else if(event.sensor.getType()==Sensor.TYPE_GRAVITY && isRecording)
         {
-            stringValues.add(Float.toString(values[0]));
-            stringValues.add(Float.toString(values[1]));
-            stringValues.add(Float.toString(values[2]));
-            recorder_Gyroscope.writeCsv(stringValues);
-            stringValues.clear();
+            for(int i=0;i<3;i++) {
+                value_gravity[i] = values[i];
+            }
         }else if(event.sensor.getType()==Sensor.TYPE_MAGNETIC_FIELD && isRecording)
         {
-            stringValues.add(Float.toString(values[0]));
-            stringValues.add(Float.toString(values[1]));
-            stringValues.add(Float.toString(values[2]));
-            recorder_Magnetic.writeCsv(stringValues);
-            stringValues.clear();
+            for(int i=0;i<3;i++) {
+                value_magnetic[i] = values[i];
+            }
         }
     }
 
